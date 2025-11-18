@@ -64,10 +64,9 @@ class MaaTouch(Touch):
         )
 
     def send(self, content):
-        """send message and get its response"""
+        """send message to MaaTouch server"""
         byte_content = str2byte(content)
         self._maatouch_stream.sendall(byte_content)
-        return self._maatouch_stream.recv(self.DEFAULT_BUFFER_SIZE)
 
     def __tap(self, points, pressure=100, duration=None, no_up=None):
         """
@@ -79,6 +78,8 @@ class MaaTouch(Touch):
         :param no_up: if true, do not append 'up' at the end
         :return:
         """
+        if not points:
+            return
         points = [list(map(int, each_point)) for each_point in points]
 
         _builder = CommandBuilder()
@@ -110,6 +111,8 @@ class MaaTouch(Touch):
         :param no_up: will not 'up' at the end
         :return:
         """
+        if not points:
+            return
         points = [list(map(int, each_point)) for each_point in points]
 
         _builder = CommandBuilder()
@@ -142,6 +145,8 @@ class MaaTouch(Touch):
         return self.__tap([(x, y)], duration=duration)
 
     def swipe(self, points: list, duration: int = 500):
+        if not points:
+            return
         return self.__swipe(points, duration=duration / len(points))
 
 

@@ -6,7 +6,7 @@ class Touch(ABC):
     @abstractmethod
     def click(self, x: int, y: int, duration: int = 100):
         """
-        点击某个坐标点
+        点击某个坐标
         :param x: x
         :param y: y
         :param duration: 持续时间. Defaults to 100ms

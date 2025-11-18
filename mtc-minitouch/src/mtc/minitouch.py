@@ -39,7 +39,7 @@ class MiniTouch(Touch):
         self.minitouch_port = None  # Socket端口记录
         self.pid = None  # minitouch服务pid记录
         if serial not in [device.serial for device in adb.device_list()]:
-            raise ADBDeviceUnFound("设备不存在，请检查是否链接设备成功")
+            raise ADBDeviceUnFound("设备不存在，请检查是否连接设备成功")
         self.__adb = adb.device(serial)  # adb设备
 
         self.__get_device_info()  # 获取设备信息
@@ -57,7 +57,7 @@ class MiniTouch(Touch):
             "shell",
             "/data/local/tmp/minitouch",
         ]
-        # 如果minitouch进程没有运行过
+        # 如果minitouch进程没有运行
         if self.minitouch_process is None:
             logger.info("start minitouch: {}".format(" ".join(command_list)))
             self.minitouch_process = subprocess.Popen(
@@ -105,10 +105,9 @@ class MiniTouch(Touch):
         logger.info("minitouch disconnected")
 
     def send(self, content):
-        """send message and get its response"""
+        """send message to minitouch server"""
         byte_content = str2byte(content)
         self.client.sendall(byte_content)
-        return self.client.recv(DEFAULT_BUFFER_SIZE)
 
     def __kill_minitouch_server(self):
         if self.minitouch_process and self.minitouch_process.poll() is None:
@@ -162,6 +161,8 @@ class MiniTouch(Touch):
         :param no_up: if true, do not append 'up' at the end
         :return:
         """
+        if not points:
+            return
         points = [self.__convert(point[0], point[1]) for point in points]
         points = [list(map(int, each_point)) for each_point in points]
 
@@ -194,6 +195,8 @@ class MiniTouch(Touch):
         :param no_up: will not 'up' at the end
         :return:
         """
+        if not points:
+            return
         points = [self.__convert(point[0], point[1]) for point in points]
         points = [list(map(int, each_point)) for each_point in points]
 
@@ -238,7 +241,13 @@ class MiniTouch(Touch):
         self.__tap([(x, y)], duration=duration)
 
     def swipe(self, points: list, duration: int = 300):
+        if len(points) < 2:
+            return
         self.__swipe(points, duration=duration / (len(points) - 1))
 
     def __del__(self):
-        self.stop()
+        try:
+            self.stop()
+        except Exception:
+            # best-effort cleanup
+            pass
