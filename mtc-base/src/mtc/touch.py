@@ -4,7 +4,7 @@ from typing import List, Tuple
 
 class Touch(ABC):
     @abstractmethod
-    def click(self, x: int, y: int, duration: int = 100):
+    def click(self, x: int, y: int, duration: int = 100) -> None:
         """
         点击某个坐标
         :param x: x
@@ -14,7 +14,7 @@ class Touch(ABC):
         """
 
     @abstractmethod
-    def swipe(self, points: List[Tuple[int, int]], duration: int = 500):
+    def swipe(self, points: List[Tuple[int, int]], duration: int = 500) -> None:
         """
         模拟手势(滑动)
         :param points: list[Point(x,y)] 坐标点列表

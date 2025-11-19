@@ -13,16 +13,18 @@ class MaaTouch(Touch):
     https://github.com/MaaAssistantArknights/MaaTouch
     """
 
-    max_x: int
-    max_y: int
-    _maatouch_stream = socket.socket
+    max_contacts: int = 0
+    max_x: int = 0
+    max_y: int = 0
+    max_pressure: int = 0
+    _maatouch_stream: socket.socket
     _maatouch_stream_storage = None
 
     MAATOUCH_FILEPATH_REMOTE = "/data/local/tmp/maatouch"
     MAATOUCH_FILEPATH_LOCAL = f"{os.path.dirname(__file__)}/bin/maatouch"
     DEFAULT_BUFFER_SIZE = 0
 
-    def __init__(self, serial):
+    def __init__(self, serial: str) -> None:
         self.__adb = adb.device(serial)
         logger.debug("MaaTouch install")
         self.__adb.push(self.MAATOUCH_FILEPATH_LOCAL, self.MAATOUCH_FILEPATH_REMOTE)
@@ -53,10 +55,10 @@ class MaaTouch(Touch):
         _, max_contacts, max_x, max_y, max_pressure, *_ = (
             socket_out.readline().replace("\n", "").replace("\r", "").split(" ")
         )
-        self.max_contacts = max_contacts
-        self.max_x = max_x
-        self.max_y = max_y
-        self.max_pressure = max_pressure
+        self.max_contacts = int(max_contacts)
+        self.max_x = int(max_x)
+        self.max_y = int(max_y)
+        self.max_pressure = int(max_pressure)
         logger.info(
             "max_contact: {}; max_x: {}; max_y: {}; max_pressure: {}".format(
                 max_contacts, max_x, max_y, max_pressure
@@ -141,13 +143,22 @@ class MaaTouch(Touch):
             _builder.up(point_id)
             _builder.publish(self)
 
-    def click(self, x: int, y: int, duration: int = 100):
+    def click(self, x: int, y: int, duration: int = 100) -> None:
         return self.__tap([(x, y)], duration=duration)
 
-    def swipe(self, points: list, duration: int = 500):
+    def swipe(self, points: list, duration: int = 500) -> None:
         if not points:
             return
         return self.__swipe(points, duration=duration / len(points))
+
+    def __del__(self):
+        """Cleanup resources on deletion"""
+        try:
+            if hasattr(self, '_maatouch_stream') and self._maatouch_stream:
+                self._maatouch_stream.close()
+        except Exception:
+            # best-effort cleanup
+            pass
 
 
 if __name__ == "__main__":

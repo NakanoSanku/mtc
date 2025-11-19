@@ -28,7 +28,7 @@ class ADBDeviceUnFound(Exception):
 
 
 class MiniTouch(Touch):
-    def __init__(self, serial):
+    def __init__(self, serial: str) -> None:
         """
         __init__ minitouch点击方式
 
@@ -237,10 +237,10 @@ class MiniTouch(Touch):
             x, y = y, self.__width - x
         return x, y
 
-    def click(self, x: int, y: int, duration: int = 100):
+    def click(self, x: int, y: int, duration: int = 100) -> None:
         self.__tap([(x, y)], duration=duration)
 
-    def swipe(self, points: list, duration: int = 300):
+    def swipe(self, points: list, duration: int = 300) -> None:
         if len(points) < 2:
             return
         self.__swipe(points, duration=duration / (len(points) - 1))

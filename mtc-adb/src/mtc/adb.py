@@ -15,12 +15,12 @@ class ADBTouch(Touch):
         """
         self.__adb = adb.device(serial)
 
-    def click(self, x: int, y: int, duration: int = 100):
+    def click(self, x: int, y: int, duration: int = 100) -> None:
         adb_command = ["input", "touchscreen", "swipe"]
         adb_command.extend([str(x), str(y), str(x), str(y), str(duration)])
         self.__adb.shell(adb_command)
 
-    def swipe(self, points: List[Tuple[int, int]], duration: int = 500):
+    def swipe(self, points: List[Tuple[int, int]], duration: int = 500) -> None:
         if not points:
             return
         start_x, start_y = points[0]
