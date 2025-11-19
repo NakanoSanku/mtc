@@ -189,7 +189,7 @@ wheels = [
 [[package]]
 name = "mmumu"
 version = "0.1.0"
-source = { git = "https://github.com/NakanoSanku/mmumu#7d87ab6de30a8430b9f424bd8384cfb70fc7956d" }
+source = { git = "https://github.com/NakanoSanku/mmumu#a72d3960ef26ca490f050a3631fd80b08bbe3ba9" }
 
 [[package]]
 name = "mtc"
